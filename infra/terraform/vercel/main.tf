@@ -16,7 +16,3 @@ resource "vercel_project" "main" {
   }
   root_directory = "frontend"
 }
-
-data "vercel_project_directory" "main" {
-  path = "../../../frontend"
-}
