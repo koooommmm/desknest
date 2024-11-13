@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
 
@@ -12,11 +13,13 @@ const DragAndDropForm: React.FC = () => {
   const images = acceptedFiles.map((file) => (
     <div
       key={file.path}
-      className='w-24 h-24 overflow-hidden rounded-lg shadow-lg'
+      className='relative w-24 h-24 overflow-hidden rounded-lg shadow-lg'
     >
-      <img
+      <Image
         src={URL.createObjectURL(file)}
         alt={file.name}
+        layout='fill'
+        objectFit='cover'
         className='object-cover w-full h-full'
       />
     </div>
@@ -32,7 +35,7 @@ const DragAndDropForm: React.FC = () => {
       >
         <input {...getInputProps()} />
         <p className='text-gray-500'>
-          Drag 'n' drop some image files here, or click to select files
+          Drag and drop some image files here, or click to select files
         </p>
       </div>
       <aside className='mt-4'>

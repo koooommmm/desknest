@@ -1,12 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-
-const DragAndDropForm: React.FC = () => {
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
-    accept: { 'image/*': [] },
-  });
-
+import DragAndDropForm from './components/DragAndDropForm';
+const Post: React.FC = () => {
   const [description, setDescription] = useState('');
 
   const handleDescriptionChange = (
@@ -15,32 +10,9 @@ const DragAndDropForm: React.FC = () => {
     setDescription(e.target.value);
   };
 
-  const files = acceptedFiles.map((file) => (
-    <div
-      key={file.path}
-      className='w-24 h-24 overflow-hidden rounded-lg shadow-lg'
-    >
-      <img
-        src={URL.createObjectURL(file)}
-        alt={file.name}
-        className='object-cover w-full h-full'
-      />
-    </div>
-  ));
-
   return (
     <section className='container mx-auto p-4 max-w-md'>
-      <div
-        {...getRootProps({
-          className:
-            'border-2 border-dashed border-gray-300 bg-gray-50 p-6 text-center rounded-lg cursor-pointer transition duration-200 hover:bg-gray-100 focus:outline-none',
-        })}
-      >
-        <input {...getInputProps()} />
-        <p className='text-gray-500'>
-          Drag 'n' drop some image files here, or click to select files
-        </p>
-      </div>
+      <DragAndDropForm></DragAndDropForm>
 
       <textarea
         value={description}
@@ -48,11 +20,6 @@ const DragAndDropForm: React.FC = () => {
         placeholder='Enter a description for your post...'
         className='mt-4 w-full p-3 border border-gray-300 rounded-lg resize-none h-32 focus:outline-none focus:ring-2 focus:ring-gray-300 bg-gray-100 placeholder-gray-500 text-gray-700'
       />
-
-      <aside className='mt-4'>
-        <h4 className='text-lg font-semibold text-gray-800 mb-2'>Preview</h4>
-        <div className='flex flex-wrap gap-4'>{files}</div>
-      </aside>
 
       <button
         type='submit'
@@ -64,4 +31,4 @@ const DragAndDropForm: React.FC = () => {
   );
 };
 
-export default DragAndDropForm;
+export default Post;
