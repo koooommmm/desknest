@@ -6,7 +6,15 @@ import { useDropzone } from 'react-dropzone';
 const DragAndDropForm: React.FC = () => {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
     accept: {
-      'image/*': [],
+      'image/jpeg': [],
+      'image/png': [],
+      'image/gif': [],
+    },
+    maxFiles: 2,
+    onDropRejected(fileRejections, event) {
+      const errors = fileRejections.map(({ errors }) =>
+        errors.map((e) => e.message).join(', ')
+      );
     },
   });
 
