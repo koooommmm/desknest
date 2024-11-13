@@ -11,10 +11,11 @@ const DragAndDropForm: React.FC = () => {
       'image/gif': [],
     },
     maxFiles: 2,
-    onDropRejected(fileRejections, event) {
+    onDropRejected(fileRejections) {
       const errors = fileRejections.map(({ errors }) =>
         errors.map((e) => e.message).join(', ')
       );
+      console.error(errors);
     },
   });
 
