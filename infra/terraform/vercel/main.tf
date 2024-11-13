@@ -14,6 +14,7 @@ resource "vercel_project" "main" {
     type = "github"
     repo = "koooommmm/desknest"
   }
+  root_directory = "frontend"
 }
 
 data "vercel_project_directory" "main" {
