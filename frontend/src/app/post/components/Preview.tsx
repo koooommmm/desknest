@@ -109,6 +109,7 @@ const Preview: React.FC<PreviewProps> = ({ file }) => {
       }));
       setMarkers([...newMarkers, { x, y, text: '', visible: true }]);
       setSelectedMarkerIndex(markers.length); // 新しいマーカーを選択
+      console.log(selectedMarkerIndex);
     }
   };
 
