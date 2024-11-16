@@ -1,37 +1,27 @@
 'use client';
-import Image from 'next/image';
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
+import Preview from './Preview';
 
 const DragAndDropForm: React.FC = () => {
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
 
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     accept: {
       'image/jpeg': [],
       'image/png': [],
       'image/gif': [],
     },
     maxFiles: 1,
-    onDropRejected() {
+    onDropAccepted: (files) => {
+      setSelectedFile(files[0]);
+      setErrorMessage(null); // Clear previous error
+    },
+    onDropRejected: () => {
       setErrorMessage('Please select only one image file.');
     },
   });
-
-  const images = acceptedFiles.map((file) => (
-    <div
-      key={file.path}
-      className='relative w-24 h-24 overflow-hidden rounded-lg shadow-lg'
-    >
-      <Image
-        src={URL.createObjectURL(file)}
-        alt={file.name}
-        layout='fill'
-        objectFit='cover'
-        className='object-cover w-full h-full'
-      />
-    </div>
-  ));
 
   return (
     <>
@@ -40,6 +30,7 @@ const DragAndDropForm: React.FC = () => {
       )}
 
       <section className='container mx-auto p-4 max-w-md'>
+        {/* Drag and Drop Area */}
         <div
           {...getRootProps({
             className:
@@ -48,12 +39,14 @@ const DragAndDropForm: React.FC = () => {
         >
           <input {...getInputProps()} />
           <p className='text-gray-500'>
-            Drag and drop some image files here, or click to select files
+            Drag and drop an image here, or click to select a file
           </p>
         </div>
+
+        {/* Preview Section */}
         <aside className='mt-4'>
           <h4 className='text-lg font-semibold text-gray-800 mb-2'>Preview</h4>
-          <div className='flex flex-wrap gap-4'>{images}</div>
+          {selectedFile && <Preview file={selectedFile} />}
         </aside>
       </section>
     </>
