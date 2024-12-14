@@ -29,7 +29,7 @@ const DragAndDropForm: React.FC = () => {
         <h3 className='text-red-500 text-center'>{errorMessage}</h3>
       )}
 
-      <section className='container mx-auto p-4 max-w-md'>
+      <section className='container mx-auto w-3/4'>
         {/* Drag and Drop Area */}
         <div
           {...getRootProps({
