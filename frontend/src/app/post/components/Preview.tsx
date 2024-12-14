@@ -20,6 +20,8 @@ const Preview: React.FC<PreviewProps> = ({ file }) => {
   const [markers, setMarkers] = useState<Marker[]>([]);
   const [selectedMarker, setSelectedMarker] = useState<Marker | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalDescription, setModalDescription] = useState('');
 
   // SVGアイコンをCanvas用の画像データに変換
   const createIconImage = async () => {
@@ -111,13 +113,36 @@ const Preview: React.FC<PreviewProps> = ({ file }) => {
     if (clickedMarkerIndex !== -1) {
       // マーカーをクリックした場合、モーダルを開く
       setSelectedMarker(markers[clickedMarkerIndex]);
+      setModalTitle(markers[clickedMarkerIndex].title);
+      setModalDescription(markers[clickedMarkerIndex].description);
       setIsModalOpen(true);
     } else {
-      const text = prompt('Enter text for marker:');
-      if (text) {
-        setMarkers([...markers, { x, y, title: text, description: '' }]);
-      }
+      const marker = { x, y, title: '', description: '' };
+      setMarkers([...markers, marker]);
+      setSelectedMarker(marker);
+      setModalTitle('');
+      setModalDescription('');
+      setIsModalOpen(true);
     }
+  };
+
+  const handleModalSave = () => {
+    // 既存のマーカーを更新
+    const updatedMarkers = markers.map((marker) =>
+      marker === selectedMarker
+        ? { ...marker, title: modalTitle, description: modalDescription }
+        : marker
+    );
+    setMarkers(updatedMarkers);
+    closeModal();
+  };
+
+  const handleModalDelete = () => {
+    const updatedMarkers = markers.filter(
+      (marker) => marker !== selectedMarker
+    );
+    setMarkers(updatedMarkers);
+    closeModal();
   };
 
   const closeModal = () => {
@@ -140,19 +165,41 @@ const Preview: React.FC<PreviewProps> = ({ file }) => {
         <div
           className='absolute bg-white border border-gray-300 rounded p-4 shadow-lg'
           style={{
-            top: selectedMarker.y + 10, // マーカーから少し離れた位置にモーダルを表示
-            left: selectedMarker.x + 100,
-            transform: 'translate(-50%, -50%)',
+            top: selectedMarker.y,
+            left: selectedMarker.x + 10,
             zIndex: 10,
           }}
         >
-          <h2 className='text-lg font-bold mb-2'>{selectedMarker.title}</h2>
-          <p>{selectedMarker.description}</p>
+          <label className='block mb-2'>Title</label>
+          <input
+            type='text'
+            className='mb-4 p-2 border border-gray-300 rounded w-full'
+            value={modalTitle}
+            onChange={(e) => setModalTitle(e.target.value)}
+          />
+          <label className='block mb-2'>Description</label>
+          <textarea
+            className='mb-4 p-2 border border-gray-300 rounded w-full'
+            value={modalDescription}
+            onChange={(e) => setModalDescription(e.target.value)}
+          />
           <button
             className='mt-2 px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600'
+            onClick={handleModalSave}
+          >
+            Save
+          </button>
+          <button
+            className='ml-2 mt-2 px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400'
             onClick={closeModal}
           >
             Close
+          </button>
+          <button
+            className='ml-2 mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'
+            onClick={handleModalDelete}
+          >
+            Delete
           </button>
         </div>
       )}
