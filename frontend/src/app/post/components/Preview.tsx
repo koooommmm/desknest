@@ -150,6 +150,30 @@ const Preview: React.FC<PreviewProps> = ({ file }) => {
     setSelectedMarker(null);
   };
 
+  const getModalPosition = () => {
+    if (!containerRef.current || !selectedMarker) return { top: 0, left: 0 };
+
+    const canvas = containerRef.current;
+    const modalWidth = 320;
+    const modalHeight = 320;
+    const canvasRect = canvas.getBoundingClientRect();
+    let top, left;
+
+    if (selectedMarker.y > canvasRect.height / 2) {
+      top = selectedMarker.y - modalHeight - 10;
+    } else {
+      top = selectedMarker.y + 10;
+    }
+
+    if (selectedMarker.x > canvasRect.width / 2) {
+      left = selectedMarker.x - modalWidth - 10;
+    } else {
+      left = selectedMarker.x + 10;
+    }
+
+    return { top, left };
+  };
+
   return (
     <div
       className='flex justify-center items-center relative'
@@ -163,10 +187,10 @@ const Preview: React.FC<PreviewProps> = ({ file }) => {
       />
       {isModalOpen && selectedMarker && containerRef.current && (
         <div
-          className='absolute bg-white border border-gray-300 rounded p-4 shadow-lg'
+          className='absolute w-80 h-80 bg-white border border-gray-300 rounded p-4 shadow-lg'
           style={{
-            top: selectedMarker.y,
-            left: selectedMarker.x + 10,
+            top: getModalPosition().top,
+            left: getModalPosition().left,
             zIndex: 10,
           }}
         >
