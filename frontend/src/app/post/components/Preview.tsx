@@ -6,7 +6,8 @@ import { CiCirclePlus } from 'react-icons/ci';
 interface Marker {
   x: number;
   y: number;
-  text: string;
+  title: string;
+  description: string;
 }
 
 interface PreviewProps {
@@ -15,7 +16,10 @@ interface PreviewProps {
 
 const Preview: React.FC<PreviewProps> = ({ file }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [markers, setMarkers] = useState<Marker[]>([]);
+  const [selectedMarker, setSelectedMarker] = useState<Marker | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // SVGアイコンをCanvas用の画像データに変換
   const createIconImage = async () => {
@@ -100,19 +104,58 @@ const Preview: React.FC<PreviewProps> = ({ file }) => {
 
     const x = e.nativeEvent.offsetX;
     const y = e.nativeEvent.offsetY;
-    const text = prompt('Enter text for marker:');
-    if (text) {
-      setMarkers([...markers, { x, y, text }]);
+
+    const clickedMarkerIndex = markers.findIndex(
+      (marker) => Math.sqrt((marker.x - x) ** 2 + (marker.y - y) ** 2) < 10 // マーカー半径内を判定
+    );
+    if (clickedMarkerIndex !== -1) {
+      // マーカーをクリックした場合、モーダルを開く
+      setSelectedMarker(markers[clickedMarkerIndex]);
+      setIsModalOpen(true);
+    } else {
+      const text = prompt('Enter text for marker:');
+      if (text) {
+        setMarkers([...markers, { x, y, title: text, description: '' }]);
+      }
     }
   };
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedMarker(null);
+  };
+
   return (
-    <div className='flex justify-center items-center'>
+    <div
+      className='flex justify-center items-center relative'
+      ref={containerRef}
+      style={{ width: '1024px', height: 'auto' }}
+    >
       <canvas
         ref={canvasRef}
         className='border border-gray-300 rounded-lg shadow-lg'
         onClick={handleCanvasClick}
       />
+      {isModalOpen && selectedMarker && containerRef.current && (
+        <div
+          className='absolute bg-white border border-gray-300 rounded p-4 shadow-lg'
+          style={{
+            top: selectedMarker.y + 10, // マーカーから少し離れた位置にモーダルを表示
+            left: selectedMarker.x + 100,
+            transform: 'translate(-50%, -50%)',
+            zIndex: 10,
+          }}
+        >
+          <h2 className='text-lg font-bold mb-2'>{selectedMarker.title}</h2>
+          <p>{selectedMarker.description}</p>
+          <button
+            className='mt-2 px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600'
+            onClick={closeModal}
+          >
+            Close
+          </button>
+        </div>
+      )}
     </div>
   );
 };
